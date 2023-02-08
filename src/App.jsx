@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useReducer, useRef, useState } from 'react'
+import { createContext, useEffect, useMemo, useReducer, useRef, useState } from 'react'
 import reactLogo from './assets/react.svg'
 import './App.css'
 import Mybtn from './childs/customButton/customButton'
@@ -32,6 +32,8 @@ function reducer(prev, action) {
       case 'customBtnClickCount':
         toReturn.customBtnClickCount = toReturn.customBtnClickCount + 1
         break;
+      default:
+        throw Error('reducer: actionResponder: action is not recognized. app.jsx')
     }
     return toReturn
   }
@@ -46,6 +48,7 @@ function reducer(prev, action) {
 
   return toReturn
 }
+const appContext = createContext()
 
 function App() {
   // i might not going to use useState that often anymore, it is still good to use for small components that
@@ -83,38 +86,44 @@ function App() {
   }
 
   return (
-    <div className={state.app_class}>
-      <div>
-        <a href="https://vitejs.dev" target="_blank">
-          <img src="/vite.svg" className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://reactjs.org" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
+    <appContext.Provider value={{
+      state, dispatch
+    }}>
+      <div className={state.app_class}>
+        <div>
+          <a href="https://vitejs.dev" target="_blank">
+            <img src="/vite.svg" className="logo" alt="Vite logo" />
+          </a>
+          <a href="https://reactjs.org" target="_blank">
+            <img src={reactLogo} className="logo react" alt="React logo" />
+          </a>
+        </div>
+        <h1>Vite + React</h1>
+        <div className="card">
+          <input type="text" ref={myinputelement} value={state.inputVal}
+            onChange={function(ev) {dispatch({action: 'inputVal', payload: ev.target.value})}} />
+          <br />
+          <button onClick={() => dispatch({action: 'increment'})}>
+            count is {state.count}
+          </button><br />
+          <button onClick={function(ev) {dispatch({action: 'decrement'})}}>
+            decrement
+          </button>
+          <p>Edit <code>src/App.jsx</code> and save to test HMR, wtf is hmr????</p>
+          <p>renderCount: {renderCount.current}</p>
+          <p>custom button clicked: {state.customBtnClickCount}</p>
+          <button onClick={focusInputOnButtonClick}>focus to input</button>
+          {/* we can send the dispatch as a props or we can useContext which is better for big app */}
+          <Mybtn>custom component</Mybtn>
+          <p>{resultFromSlowStuff}</p>
+        </div>
+        <p className="read-the-docs">
+          Click on the Vite and React logos to learn more
+        </p>
       </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <input type="text" ref={myinputelement} value={state.inputVal}
-          onChange={function(ev) {dispatch({action: 'inputVal', payload: ev.target.value})}} />
-        <br />
-        <button onClick={() => dispatch({action: 'increment'})}>
-          count is {state.count}
-        </button><br />
-        <button onClick={function(ev) {dispatch({action: 'decrement'})}}>
-          decrement
-        </button>
-        <p>Edit <code>src/App.jsx</code> and save to test HMR, wtf is hmr????</p>
-        <p>renderCount: {renderCount.current}</p>
-        <p>custom button clicked: {state.customBtnClickCount}</p>
-        <button onClick={focusInputOnButtonClick}>focus to input</button>
-        <Mybtn dispatch={dispatch}>custom component</Mybtn>
-        <p>{resultFromSlowStuff}</p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </div>
+    </appContext.Provider>
   )
 }
 
 export default App
+export {appContext}
