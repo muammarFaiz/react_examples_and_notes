@@ -8,7 +8,7 @@ import {
 import ErrEl from './childs/errorElem/errorPage'
 
 const router = createBrowserRouter([
-  {path: '/react_notes', element: <App />, errorElement: <ErrEl />, children: []}
+  {path: 'react_examples_and_notes_githubpages', element: <App />, errorElement: <ErrEl />, children: []}
 ])
 
 ReactDOM.createRoot(document.getElementById('root')).render(
