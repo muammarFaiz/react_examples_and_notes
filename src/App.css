@@ -44,3 +44,11 @@
 .app_pink {
   background-color: pink;
 }
+.appDirectChilds {
+  display: flex;
+  gap: 10px;
+}
+.appDirectChilds > div {
+  border: 1px solid whitesmoke;
+  padding: 5px 10px;
+}

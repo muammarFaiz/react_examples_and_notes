@@ -1,7 +1,8 @@
 import { createContext, useEffect, useMemo, useReducer, useRef, useState } from 'react'
 import reactLogo from './assets/react.svg'
 import './App.css'
-import Mybtn from './childs/customButton/customButton'
+import Child1 from './childs/child1/child1'
+import Child2 from './childs/child2/child2'
 
 // small components is good to prevent big components to re-render over small stuff, also a big component doesn't
 // have to re-render all its children, put the childrens inside a memo, memo makes a component skip a re-render
@@ -33,7 +34,7 @@ function reducer(prev, action) {
         toReturn.customBtnClickCount = toReturn.customBtnClickCount + 1
         break;
       default:
-        throw Error('reducer: actionResponder: action is not recognized. app.jsx')
+        throw new Error('reducer: actionResponder: action is not recognized. app.jsx')
     }
     return toReturn
   }
@@ -51,8 +52,8 @@ function reducer(prev, action) {
 const appContext = createContext()
 
 function App() {
-  // i might not going to use useState that often anymore, it is still good to use for small components that
-  // only have one state. it is best if a component only have 1 re-render state, either with useReducer or useState
+  // it is best if a component only have 1 or no render every input/click, if you have multiple renders
+  // happened for a single user input then there might be a space for improvement, sometimes.
   const [state, dispatch] = useReducer(reducer, {
     count: 0, app_class: 'App', slowfunction_result: '', inputVal: '', customBtnClickCount: 0
   })
@@ -86,10 +87,15 @@ function App() {
   }
 
   return (
+    // problem: whenever context.provider re-render all its child that use useContext will always re-render
+    // regardless whether the child use memo or not.
+    // solution: i put all the child into memo and wrap that memo with another component called Barrier, the
+    // Barrier will re-render but the real child protected with memo will not except if the props change.
     <appContext.Provider value={{
       state, dispatch
     }}>
       <div className={state.app_class}>
+        {/* Vite and React logo */}
         <div>
           <a href="https://vitejs.dev" target="_blank">
             <img src="/vite.svg" className="logo" alt="Vite logo" />
@@ -99,22 +105,31 @@ function App() {
           </a>
         </div>
         <h1>Vite + React</h1>
+
         <div className="card">
+          {/* test input to focus on a button click using button onclick and a useRef */}
           <input type="text" ref={myinputelement} value={state.inputVal}
             onChange={function(ev) {dispatch({action: 'inputVal', payload: ev.target.value})}} />
           <br />
-          <button onClick={() => dispatch({action: 'increment'})}>
-            count is {state.count}
-          </button><br />
-          <button onClick={function(ev) {dispatch({action: 'decrement'})}}>
-            decrement
-          </button>
-          <p>Edit <code>src/App.jsx</code> and save to test HMR, wtf is hmr????</p>
+          {/* increment decrement buttons */}
+          <button onClick={() => dispatch({action: 'increment'})}>count is {state.count}</button><br />
+          <button onClick={function(ev) {dispatch({action: 'decrement'})}}>decrement</button>
+          {/* show app component render counts */}
           <p>renderCount: {renderCount.current}</p>
-          <p>custom button clicked: {state.customBtnClickCount}</p>
+          {/* show child-2 button click counts */}
+          <p>button123 click count: {state.customBtnClickCount}</p>
+          {/* button click to focus input */}
           <button onClick={focusInputOnButtonClick}>focus to input</button>
-          {/* we can send the dispatch as a props or we can useContext which is better for big app */}
-          <Mybtn>custom component</Mybtn>
+          {/* we can send the dispatch as a props or we can useContext which is better for big app.
+          how do we communicate between childrens without interupting the parent?
+          first, the receiver will send a function / setState (depend on what you need) on mount using useEffect
+          to the parent context. second, the sender will take the receiver function / setState from parent using
+          useContext. third, the sender call the receiver function / setState with whatever parameter / value
+          that needed to send to the receiver */}
+          <div className="appDirectChilds">
+            <Child1 />
+            <Child2 />
+          </div>
           <p>{resultFromSlowStuff}</p>
         </div>
         <p className="read-the-docs">
