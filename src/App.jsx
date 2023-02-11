@@ -3,7 +3,7 @@ import reactLogo from './assets/react.svg'
 import './App.css'
 import Child1 from './childs/child1/child1'
 import Child2 from './childs/child2/child2'
-import { useNavigate } from 'react-router-dom'
+import { Outlet, useNavigate } from 'react-router-dom'
 
 // small components is good to prevent big components to re-render over small stuff, also a big component doesn't
 // have to re-render all its children, put the childrens inside a memo, memo makes a component skip a re-render
@@ -87,6 +87,9 @@ function App() {
   function focusInputOnButtonClick() {
     myinputelement.current.focus()
   }
+  function setasparam_onclick() {
+    navigate(state.inputVal)
+  }
 
   return (
     // problem: whenever context.provider re-render all its child that use useContext will always re-render
@@ -114,15 +117,15 @@ function App() {
           <input type="text" ref={myinputelement} value={state.inputVal}
             onChange={function(ev) {dispatch({action: 'inputVal', payload: ev.target.value})}} />
           <br />
+          <button onClick={setasparam_onclick}>set as param</button><br />
+          <Outlet />
           {/* increment decrement buttons */}
           <button onClick={() => dispatch({action: 'increment'})}>count is {state.count}</button>
           <button onClick={function(ev) {dispatch({action: 'decrement'})}}>decrement</button><br />
+
           <button onClick={function(ev) {navigate('nested1')}}>to nested1</button>
-          {/* show app component render counts */}
           <p>renderCount: {renderCount.current}</p>
-          {/* show child-2 button click counts */}
           <p>button123 click count: {state.customBtnClickCount}</p>
-          {/* button click to focus input */}
           <button onClick={focusInputOnButtonClick}>focus to input</button>
           {/* we can send the dispatch as a props or we can useContext which is better for big app.
           how do we communicate between childrens without interupting the parent?
