@@ -3,6 +3,7 @@ import reactLogo from './assets/react.svg'
 import './App.css'
 import Child1 from './childs/child1/child1'
 import Child2 from './childs/child2/child2'
+import { useNavigate } from 'react-router-dom'
 
 // small components is good to prevent big components to re-render over small stuff, also a big component doesn't
 // have to re-render all its children, put the childrens inside a memo, memo makes a component skip a re-render
@@ -59,6 +60,7 @@ function App() {
   })
   const renderCount = useRef(0)
   const myinputelement = useRef()
+  const navigate = useNavigate()
   const resultFromSlowStuff = useMemo(function() {
     // commonly useMemo used to run a slow function
     // commonly people give useMemo a function that return something and assign it to a variable like this
@@ -91,6 +93,7 @@ function App() {
     // regardless whether the child use memo or not.
     // solution: i put all the child into memo and wrap that memo with another component called Barrier, the
     // Barrier will re-render but the real child protected with memo will not except if the props change.
+    // source: https://blog.axlight.com/posts/4-options-to-prevent-extra-rerenders-with-react-context/
     <appContext.Provider value={{
       state, dispatch
     }}>
@@ -112,8 +115,9 @@ function App() {
             onChange={function(ev) {dispatch({action: 'inputVal', payload: ev.target.value})}} />
           <br />
           {/* increment decrement buttons */}
-          <button onClick={() => dispatch({action: 'increment'})}>count is {state.count}</button><br />
-          <button onClick={function(ev) {dispatch({action: 'decrement'})}}>decrement</button>
+          <button onClick={() => dispatch({action: 'increment'})}>count is {state.count}</button>
+          <button onClick={function(ev) {dispatch({action: 'decrement'})}}>decrement</button><br />
+          <button onClick={function(ev) {navigate('nested1')}}>to nested1</button>
           {/* show app component render counts */}
           <p>renderCount: {renderCount.current}</p>
           {/* show child-2 button click counts */}
