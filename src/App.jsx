@@ -1,5 +1,4 @@
 import { createContext, useEffect, useMemo, useReducer, useRef, useState } from 'react'
-import reactLogo from './assets/react.svg'
 import './App.css'
 import Child1 from './childs/child1/child1'
 import Child2 from './childs/child2/child2'
@@ -101,15 +100,6 @@ function App() {
       state, dispatch
     }}>
       <div className={state.app_class}>
-        {/* Vite and React logo */}
-        <div>
-          <a href="https://vitejs.dev" target="_blank">
-            <img src="/vite.svg" className="logo" alt="Vite logo" />
-          </a>
-          <a href="https://reactjs.org" target="_blank">
-            <img src={reactLogo} className="logo react" alt="React logo" />
-          </a>
-        </div>
         <h1>Vite + React</h1>
 
         <div className="card">
@@ -118,13 +108,14 @@ function App() {
             onChange={function(ev) {dispatch({action: 'inputVal', payload: ev.target.value})}} />
           <br />
           <button onClick={setasparam_onclick}>set as param</button><br />
+          <button onClick={ev => navigate('tryform')}>try a form</button><br />
           <Outlet />
           {/* increment decrement buttons */}
           <button onClick={() => dispatch({action: 'increment'})}>count is {state.count}</button>
           <button onClick={function(ev) {dispatch({action: 'decrement'})}}>decrement</button><br />
 
           <button onClick={function(ev) {navigate('nested1')}}>to nested1</button>
-          <p>renderCount: {renderCount.current}</p>
+          <p className='apprendercount'>app render count: {renderCount.current}</p>
           <p>button123 click count: {state.customBtnClickCount}</p>
           <button onClick={focusInputOnButtonClick}>focus to input</button>
           {/* we can send the dispatch as a props or we can useContext which is better for big app.

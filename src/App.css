@@ -52,3 +52,8 @@
   border: 1px solid whitesmoke;
   padding: 5px 10px;
 }
+.apprendercount {
+  position: fixed;
+  left: 20px;
+  top: 0px;
+}
