@@ -59,6 +59,7 @@ function App() {
   })
   const renderCount = useRef(0)
   const myinputelement = useRef()
+  const child12ref = useRef()
   const navigate = useNavigate()
   const resultFromSlowStuff = useMemo(function() {
     // commonly useMemo used to run a slow function
@@ -87,7 +88,7 @@ function App() {
     myinputelement.current.focus()
   }
   function setasparam_onclick() {
-    navigate(state.inputVal)
+    navigate('madeup/' + state.inputVal)
   }
 
   return (
@@ -95,9 +96,12 @@ function App() {
     // regardless whether the child use memo or not.
     // solution: i put all the child into memo and wrap that memo with another component called Barrier, the
     // Barrier will re-render but the real child protected with memo will not except if the props change.
+    // the child and the memo should be defined outside the barrier component (in the same file or not does not
+    // matter), BASIC REACT: anything that is defined inside the function component will be re-defined if the
+    // component re-render.
     // source: https://blog.axlight.com/posts/4-options-to-prevent-extra-rerenders-with-react-context/
     <appContext.Provider value={{
-      state, dispatch
+      state, dispatch, child12ref
     }}>
       <div className={state.app_class}>
         <h1>Vite + React</h1>
@@ -119,11 +123,16 @@ function App() {
           <p>button123 click count: {state.customBtnClickCount}</p>
           <button onClick={focusInputOnButtonClick}>focus to input</button>
           {/* we can send the dispatch as a props or we can useContext which is better for big app.
-          how do we communicate between childrens without interupting the parent?
-          first, the receiver will send a function / setState (depend on what you need) on mount using useEffect
-          to the parent context. second, the sender will take the receiver function / setState from parent using
-          useContext. third, the sender call the receiver function / setState with whatever parameter / value
-          that needed to send to the receiver */}
+
+          problem: how do we communicate between childrens without interupting the parent?
+
+          solution: quoting from freecodecamp.org: "React context allows us to pass down and use
+          (consume) data in whatever component we need in our React app without using props."
+
+          in other words, because it was made to send DOWN data, react context cannot accept data upward (from child
+          to parent) without help from hooks like useState / useRef (in this example i am using useRef so the hook
+          will not re-render the parent) so context will send down the hook and the hook will send the data
+          upward to parent, and then the data on the parent can be send down anywhere using context */}
           <div className="appDirectChilds">
             <Child1 />
             <Child2 />

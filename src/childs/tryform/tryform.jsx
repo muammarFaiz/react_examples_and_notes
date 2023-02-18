@@ -1,30 +1,21 @@
-import { useRef } from "react"
-import { Form, useActionData } from "react-router-dom"
+import { useRef, useState } from "react"
+// RRD:
+import { Form } from "react-router-dom"
 import './tryform.css'
 
-export async function formaction({request}) {
-  const data = await request.formData()
-  const faiz = data.get('faiz')
-  return new Promise(function(resolve, reject) {
-    setTimeout(() => {
-      resolve(faiz)
-    }, 1500);
-  })
-}
-
 export default function Tryform(props) {
-  const form_result = useActionData()
   const rendercount = useRef(0)
+  const [loading, setLoading] = useState('')
 
   rendercount.current++
 
   return (
     <div className="tryform">
       <p>tryform render count: {rendercount.current}</p>
-      <p>{form_result}</p>
-      <Form method="post">
+      <Form method="post" action="/tryform_action" onSubmit={function(ev) {setLoading('show')}}>
         <input type="text" name="faiz" />
       </Form>
+      {loading === 'show' ? <p>loading...</p> : ''}
     </div>
   )
 }
