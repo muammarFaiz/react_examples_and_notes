@@ -83,14 +83,7 @@ function App() {
   }, [state.count])
 
   renderCount.current++
-
-  useEffect(function() {
-    console.log(secret.TEST_1)
-    console.log(secret)
-    console.log(secrets.TEST_1)
-    console.log(secrets)
-  }, [])
-
+  
   function focusInputOnButtonClick() {
     myinputelement.current.focus()
   }
